@@ -4,7 +4,7 @@ An implementation of [the `URLSearchParams` class](https://url.spec.whatwg.org/#
 
 ## Examples
 
-    import url_search_params.UrlSearchParams
+    import url_search_params (UrlSearchParams)
 
     let params = UrlSearchParams.from_string('a=A+A%26A&n=1&n=2')
 

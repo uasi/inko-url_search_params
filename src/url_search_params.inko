@@ -1,8 +1,8 @@
-import std.clone.Clone
-import std.cmp.Contains
-import std.int.Format
-import std.iter.(Iter, Stream)
-import std.string.(StringBuffer, ToString)
+import std.clone (Clone)
+import std.cmp (Contains)
+import std.int (Format)
+import std.iter (Iter, Stream)
+import std.string (StringBuffer, ToString)
 
 let SPACE = 0x20
 let PERCENT = 0x25
@@ -10,7 +10,6 @@ let PLUS = 0x2B
 let HYPTHEN = 0x2D
 let DOT = 0x2E
 let UNDERSCORE = 0x5F
-
 let ZERO = 0x30
 let NINE = 0x39
 let UPPER_A = 0x41
@@ -27,25 +26,30 @@ class pub UrlSearchParams {
     from_array([])
   }
 
-  fn pub static from_array(entries: Array[(String, String)]) -> UrlSearchParams {
-    UrlSearchParams { @entries = entries }
+  fn pub static from_array(
+    entries: Array[(String, String)],
+  ) -> UrlSearchParams {
+    UrlSearchParams(entries)
   }
 
   fn pub static from_string(string: ref String) -> UrlSearchParams {
     let string = string.strip_prefix('?')
 
-    let entries = string.split('&').select_map fn (pair) {
-      match pair.byte_index('=', 0) {
-        case Some(index) -> {
-          let key = pair.slice(0, index).to_string
-          let value = pair.slice(index + 1, pair.size - index - 1).to_string
+    let entries = string
+      .split('&')
+      .select_map(fn (pair) {
+        match pair.byte_index('=', 0) {
+          case Some(index) -> {
+            let key = pair.slice(0, index).to_string
+            let value = pair.slice(index + 1, pair.size - index - 1).to_string
 
-          Option.Some((decode(key), decode(value)))
+            Option.Some((decode(key), decode(value)))
+          }
+          case None if pair.size > 0 -> Option.Some((decode(pair), ''))
+          case None -> Option.None
         }
-        case None if pair.size > 0 -> Option.Some((decode(pair), ''))
-        case None -> Option.None
-      }
-    }.to_array
+      })
+      .to_array
 
     from_array(entries)
   }
@@ -63,39 +67,34 @@ class pub UrlSearchParams {
   }
 
   fn pub keys -> Stream[String] {
-    @entries.iter.map fn (e) { e.0 }
+    @entries.iter.map(fn (e) { e.0 })
   }
 
   fn pub values -> Stream[String] {
-    @entries.iter.map fn (e) { e.1 }
+    @entries.iter.map(fn (e) { e.1 })
   }
 
   fn pub has?(key: ref String, value: ref String) -> Bool {
-    @entries.iter.any? fn (e) { (e.0 == key) and (e.1 == value) }
+    @entries.iter.any?(fn (e) { (e.0 == key) and (e.1 == value) })
   }
 
   fn pub has_key?(key: ref String) -> Bool {
-    @entries.iter.any? fn (e) { e.0 == key }
+    @entries.iter.any?(fn (e) { e.0 == key })
   }
 
   fn pub get(key: String) -> Option[String] {
-    @entries.iter.find_map fn (e) {
-      if e.0 == key {
-        Option.Some(e.1)
-      } else {
-        Option.None
-      }
-    }
+    @entries.iter.find_map(fn (e) {
+      if e.0 == key { Option.Some(e.1) } else { Option.None }
+    })
   }
 
   fn pub get_all(key: String) -> Array[String] {
-    @entries.iter.select_map fn (e) {
-      if e.0 == key {
-        Option.Some(e.1)
-      } else {
-        Option.None
-      }
-    }.to_array
+    @entries
+      .iter
+      .select_map(fn (e) {
+        if e.0 == key { Option.Some(e.1) } else { Option.None }
+      })
+      .to_array
   }
 
   fn pub mut append(key: String, value: String) {
@@ -105,13 +104,16 @@ class pub UrlSearchParams {
   fn pub mut delete(key: ref String, value: ref String) {
     let entries = (@entries := [])
 
-    @entries = entries.into_iter.select fn (e) { (e.0 != key) or (e.1 != value) }.to_array
+    @entries = entries
+      .into_iter
+      .select(fn (e) { (e.0 != key) or (e.1 != value) })
+      .to_array
   }
 
   fn pub mut delete_by_key(key: ref String) {
     let entries = (@entries := [])
 
-    @entries = entries.into_iter.select fn (e) { e.0 != key }.to_array
+    @entries = entries.into_iter.select(fn (e) { e.0 != key }).to_array
   }
 
   fn pub mut set(key: String, value: String) {
@@ -120,24 +122,27 @@ class pub UrlSearchParams {
 
     entries.push((key, value))
 
-    @entries = entries.into_iter.select_map fn move (e) {
-      if e.0 == key {
-        if seen {
-          Option.None
+    @entries = entries
+      .into_iter
+      .select_map(fn move (e) {
+        if e.0 == key {
+          if seen {
+            Option.None
+          } else {
+            seen = true
+            Option.Some((key, value))
+          }
         } else {
-          seen = true
-          Option.Some((key, value))
+          Option.Some(e)
         }
-      } else {
-        Option.Some(e)
-      }
-    }.to_array
+      })
+      .to_array
   }
 }
 
 impl Clone[UrlSearchParams] for UrlSearchParams {
   fn pub clone -> UrlSearchParams {
-    UrlSearchParams { @entries = @entries.clone }
+    UrlSearchParams(@entries.clone)
   }
 }
 
@@ -149,7 +154,7 @@ impl Contains[String] for UrlSearchParams {
 
 impl ToString for UrlSearchParams {
   fn pub to_string -> String {
-    let iter = @entries.iter.map fn (e) {
+    let iter = @entries.iter.map(fn (e) {
       let mut buf = StringBuffer.new
 
       buf.push(encode(e.0))
@@ -157,7 +162,7 @@ impl ToString for UrlSearchParams {
       buf.push(encode(e.1))
 
       buf.to_string
-    }
+    })
 
     String.join(iter, '&')
   }
@@ -217,18 +222,22 @@ fn decode(string: ref String) -> String {
 fn encode(string: ref String) -> String {
   let mut buf = ByteArray.new
 
-  string.bytes.each fn (b) {
+  string.bytes.each(fn (b) {
     if b == SPACE {
       buf.push(PLUS)
     } else if b == HYPTHEN or b == DOT or b == UNDERSCORE {
       buf.push(b)
-    } else if ZERO.to(NINE).contains?(b) or UPPER_A.to(UPPER_Z).contains?(b) or LOWER_A.to(LOWER_Z).contains?(b) {
+    } else if
+      ZERO.to(NINE).contains?(b)
+        or UPPER_A.to(UPPER_Z).contains?(b)
+        or LOWER_A.to(LOWER_Z).contains?(b)
+    {
       buf.push(b)
     } else {
       buf.push(PERCENT)
       buf.append(b.format(Format.Hex).to_upper.to_byte_array)
     }
-  }
+  })
 
   buf.to_string
 }

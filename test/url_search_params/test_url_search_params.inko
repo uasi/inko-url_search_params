@@ -1,9 +1,8 @@
-import std.test.Tests
-
-import url_search_params.UrlSearchParams
+import std.test (Tests)
+import url_search_params (UrlSearchParams)
 
 fn pub tests(t: mut Tests) {
-  t.test('UrlSerachParams.from_string') fn (t) {
+  t.test('UrlSerachParams.from_string', fn (t) {
     let params = UrlSearchParams.from_string('')
 
     t.equal(params.into_array, [])
@@ -46,7 +45,10 @@ fn pub tests(t: mut Tests) {
 
     let params = UrlSearchParams.from_string('a=A+A&b=B%26B&c=%&d=%1& e = E ')
 
-    t.equal(params.into_array, [('a', 'A A'), ('b', 'B&B'), ('c', '%'), ('d', '%1'), (' e ', ' E ')])
+    t.equal(
+      params.into_array,
+      [('a', 'A A'), ('b', 'B&B'), ('c', '%'), ('d', '%1'), (' e ', ' E ')],
+    )
 
     let params = UrlSearchParams.from_string('a=A&b=B&a=A&a=A')
 
@@ -59,9 +61,9 @@ fn pub tests(t: mut Tests) {
     let params = UrlSearchParams.from_string(' a = A ')
 
     t.equal(params.into_array, [(' a ', ' A ')])
-  }
+  })
 
-  t.test('UrlSerachParams.to_string') fn (t) {
+  t.test('UrlSerachParams.to_string', fn (t) {
     let params = UrlSearchParams.from_array([])
 
     t.equal(params.to_string, '')
@@ -78,67 +80,84 @@ fn pub tests(t: mut Tests) {
 
     t.equal(params.to_string, 'a=A&b=B')
 
-    let params = UrlSearchParams.from_array([('a', 'A A'), ('b', 'B&B'), ('c', '%'), ('d', '%1'), (' e ', ' E ')])
+    let params = UrlSearchParams.from_array(
+      [('a', 'A A'), ('b', 'B&B'), ('c', '%'), ('d', '%1'), (' e ', ' E ')],
+    )
 
     t.equal(params.to_string, 'a=A+A&b=B%26B&c=%25&d=%251&+e+=+E+')
 
-    let params = UrlSearchParams.from_array([('a', 'A'), ('b', 'B'), ('a', 'A'), ('a', 'A')])
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('b', 'B'), ('a', 'A'), ('a', 'A')],
+    )
 
     t.equal(params.to_string, 'a=A&b=B&a=A&a=A')
 
-    let params = UrlSearchParams.from_array([('n', '2'), ('n', '1'), ('n', '3')])
+    let params = UrlSearchParams.from_array(
+      [('n', '2'), ('n', '1'), ('n', '3')],
+    )
 
     t.equal(params.to_string, 'n=2&n=1&n=3')
-  }
+  })
 
-  t.test('UrlSearchParams.size') fn (t) {
+  t.test('UrlSearchParams.size', fn (t) {
     let params = UrlSearchParams.from_array([])
 
     t.equal(params.size, 0)
 
-    let params = UrlSearchParams.from_array([('a', 'A'), ('b', 'B'), ('n', '1'), ('n', '2')])
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('b', 'B'), ('n', '1'), ('n', '2')],
+    )
 
     t.equal(params.size, 4)
-  }
+  })
 
-  t.test('UrlSearchParams.entries') fn (t) {
+  t.test('UrlSearchParams.entries', fn (t) {
     let params = UrlSearchParams.from_array([])
 
     t.equal(params.entries.to_array, [])
 
-    let params = UrlSearchParams.from_array([('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')])
+    let params = UrlSearchParams.from_array(
+      [('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')],
+    )
 
-    t.equal(params.entries.map fn (e) { e.clone }.to_array, [('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')])
-  }
+    t.equal(
+      params.entries.map(fn (e) { e.clone }).to_array,
+      [('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')],
+    )
+  })
 
-  t.test('UrlSearchParams.keys') fn (t) {
+  t.test('UrlSearchParams.keys', fn (t) {
     let params = UrlSearchParams.from_array([])
 
     t.equal(params.keys.to_array, [])
 
-    let params = UrlSearchParams.from_array([('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')])
+    let params = UrlSearchParams.from_array(
+      [('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')],
+    )
 
     t.equal(params.keys.to_array, ['a', 'b', 'n', 'n'])
-  }
+  })
 
-  t.test('UrlSearchParams.values') fn (t) {
+  t.test('UrlSearchParams.values', fn (t) {
     let params = UrlSearchParams.from_array([])
 
     t.equal(params.values.to_array, [])
 
-    let params = UrlSearchParams.from_array([('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')])
+    let params = UrlSearchParams.from_array(
+      [('a', 'A A'), ('b', 'B&B'), ('n', '1'), ('n', '2')],
+    )
 
     t.equal(params.values.to_array, ['A A', 'B&B', '1', '2'])
-  }
+  })
 
-  t.test('UrlSearchParams.has{,_key}?') fn (t) {
-  let params = UrlSearchParams.from_array([])
+  t.test('UrlSearchParams.has{,_key}?', fn (t) {
+    let params = UrlSearchParams.from_array([])
 
     t.equal(params.has?('x', 'X'), false)
 
     t.equal(params.has_key?('x'), false)
 
-  let params = UrlSearchParams.from_array([('a', 'A'), ('b', 'B')])
+    let params = UrlSearchParams.from_array([('a', 'A'), ('b', 'B')])
 
     t.equal(params.has?('a', 'A'), true)
     t.equal(params.has?('a', 'X'), false)
@@ -146,60 +165,80 @@ fn pub tests(t: mut Tests) {
 
     t.equal(params.has_key?('a'), true)
     t.equal(params.has_key?('x'), false)
-  }
+  })
 
-  t.test('UrlSerachParams.get') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2')])
+  t.test('UrlSerachParams.get', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2')],
+    )
 
     t.equal(params.get('n'), Option.Some('1'))
     t.equal(params.get('x'), Option.None)
-  }
+  })
 
-  t.test('UrlSerachParams.get_all') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')])
+  t.test('UrlSerachParams.get_all', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')],
+    )
 
     t.equal(params.get_all('n'), ['1', '2', '3'])
     t.equal(params.get_all('x'), [])
-  }
+  })
 
-  t.test('UrlSerachParams.append') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')])
-
-    params.append('n', '3')
-
-    t.equal(params.into_array, [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3'), ('n', '3')])
-  }
-
-  t.test('UrlSerachParams.append') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')])
+  t.test('UrlSerachParams.append', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')],
+    )
 
     params.append('n', '3')
 
-    t.equal(params.into_array, [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3'), ('n', '3')])
-  }
+    t.equal(
+      params.into_array,
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3'), ('n', '3')],
+    )
+  })
 
-  t.test('UrlSerachParams.delete') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')])
+  t.test('UrlSerachParams.append', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')],
+    )
+
+    params.append('n', '3')
+
+    t.equal(
+      params.into_array,
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3'), ('n', '3')],
+    )
+  })
+
+  t.test('UrlSerachParams.delete', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')],
+    )
 
     params.delete('n', '2')
 
     t.equal(params.into_array, [('a', 'A'), ('n', '1'), ('b', 'B'), ('n', '3')])
-  }
+  })
 
-  t.test('UrlSerachParams.delete_by_key') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')])
+  t.test('UrlSerachParams.delete_by_key', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')],
+    )
 
     params.delete_by_key('n')
 
     t.equal(params.into_array, [('a', 'A'), ('b', 'B')])
-  }
+  })
 
-  t.test('UrlSerachParams.set') fn (t) {
-    let params = UrlSearchParams.from_array([('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')])
+  t.test('UrlSerachParams.set', fn (t) {
+    let params = UrlSearchParams.from_array(
+      [('a', 'A'), ('n', '1'), ('n', '2'), ('b', 'B'), ('n', '3')],
+    )
 
     params.set('n', 'N')
     params.set('c', 'C')
 
     t.equal(params.into_array, [('a', 'A'), ('n', 'N'), ('b', 'B'), ('c', 'C')])
-  }
+  })
 }

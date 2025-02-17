@@ -19,8 +19,8 @@ let LOWER_A = 0x61
 let LOWER_F = 0x66
 let LOWER_Z = 0x7A
 
-class pub UrlSearchParams {
-  let pub @entries: Array[(String, String)]
+type pub UrlSearchParams {
+  let pub mut @entries: Array[(String, String)]
 
   fn pub static new -> UrlSearchParams {
     from_array([])
@@ -33,7 +33,7 @@ class pub UrlSearchParams {
   }
 
   fn pub static from_string(string: ref String) -> UrlSearchParams {
-    let string = string.strip_prefix('?')
+    let string = string.strip_prefix('?').or(string)
 
     let entries = string
       .split('&')
@@ -140,8 +140,8 @@ class pub UrlSearchParams {
   }
 }
 
-impl Clone[UrlSearchParams] for UrlSearchParams {
-  fn pub clone -> UrlSearchParams {
+impl Clone for UrlSearchParams {
+  fn pub clone -> Self {
     UrlSearchParams(@entries.clone)
   }
 }

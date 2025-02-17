@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-02-18 v0.3.0
+
+- Support Inko 0.18.1.
+
 ## 2024-07-31 v0.2.0
 
 - Support Inko 0.15.0.
